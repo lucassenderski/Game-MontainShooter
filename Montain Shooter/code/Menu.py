@@ -18,6 +18,13 @@ class Menu:
         menu_option = 0
         pygame.mixer_music.load('./asset/Menu.mp3')
         pygame.mixer_music.play(-1)
+
+        # Cria retângulos clicáveis para cada opção
+        option_rects = []
+        for i in range(len(MENU_OPTION)):
+            option_rect = Rect(0, 0, 300, 25)  # Largura e altura do retângulo
+            option_rect.center = (WIN_WIDTH / 2, 200 + 25 * i)
+            option_rects.append(option_rect)
         while True:
             # DRAW IMAGES
             self.window.blit(source=self.surf, dest=self.rect)
@@ -31,7 +38,7 @@ class Menu:
                     self.menu_text(20, MENU_OPTION[i], C_WHITE, ((WIN_WIDTH / 2), 200 + 25 * i))
             pygame.display.flip()
 
-            # Check for all events
+            # Check pelos eventos
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()  # Close Window
@@ -49,6 +56,17 @@ class Menu:
                             menu_option = len(MENU_OPTION) - 1
                     if event.key == pygame.K_RETURN:  # ENTER
                         return MENU_OPTION[menu_option]
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Botão esquerdo
+                    mouse_pos = pygame.mouse.get_pos()
+                    for i, rect in enumerate(option_rects):
+                        if rect.collidepoint(mouse_pos):
+                            return MENU_OPTION[i]
+
+                if event.type == pygame.MOUSEMOTION:
+                    mouse_pos = pygame.mouse.get_pos()
+                    for i, rect in enumerate(option_rects):
+                        if rect.collidepoint(mouse_pos):
+                            menu_option = i
 
     def menu_text(self, text_size: int, text: str, text_color: tuple, text_center_pos: tuple):
         text_font: Font = pygame.font.SysFont(name="Lucida Sans Typewriter", size=text_size)

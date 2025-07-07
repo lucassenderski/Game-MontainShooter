@@ -14,6 +14,16 @@ class Player(Entity):
         self.shot_delay = ENTITY_SHOT_DELAY[self.name]
 
     def move(self):
+        mouse_buttons = pygame.mouse.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+        # Movimento vertical com mouse
+        if mouse_buttons[0]:  # Botão esquerdo pressionado
+            target_y = mouse_pos[1]
+            if abs(self.rect.centery - target_y) > 5:  # Deadzone de 5 pixels
+                if self.rect.centery < target_y:
+                    self.rect.centery += ENTITY_SPEED[self.name]
+                else:
+                    self.rect.centery -= ENTITY_SPEED[self.name]
         pressed_key = pygame.key.get_pressed()
         if pressed_key[PLAYER_KEY_UP[self.name]] and self.rect.top > 0:
             self.rect.centery -= ENTITY_SPEED[self.name]
@@ -26,9 +36,14 @@ class Player(Entity):
         pass
 
     def shoot(self):
+
         self.shot_delay -= 1
         if self.shot_delay == 0:
             self.shot_delay = ENTITY_SHOT_DELAY[self.name]
+            mouse_buttons = pygame.mouse.get_pressed()
+            if mouse_buttons[0]:  # Botão esquerdo do mouse
+                return PlayerShot(name=f'{self.name}Shot',
+                                  position=(self.rect.centerx, self.rect.centery))
             pressed_key = pygame.key.get_pressed()
             if pressed_key[PLAYER_KEY_SHOOT[self.name]]:
                 return PlayerShot(name=f'{self.name}Shot', position=(self.rect.centerx, self.rect.centery))
